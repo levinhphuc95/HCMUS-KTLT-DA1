@@ -5,41 +5,83 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_LINE 1024
-#define MAX_SV   100
+#include "SinhVien.h"
 
-typedef struct {
-    char MSSV[20];
-    char TenSV[100];
-    char Khoa[50];
-    char KhoaHoc[10]; // Khoá học (VD: 2020)
-} SinhVien;
-
-void readCSV(const char *filename, SinhVien svList[], int *count) {
-    FILE *file = fopen(filename, "r");
+// Đọc file CSV và lưu vào mảng
+void readCSV(const char *filename, SinhVien **svList, int &count) {
+    FILE* file = fopen(filename, "r");
     if (!file) {
-        perror("Không thể mở file CSV");
-        exit(1);
+        printf("Khong the mo file %s\n", filename);
+        return;
     }
 
-    char line[MAX_LINE];
-    *count = 0;
+    // Đếm số dòng để cấp phát mảng
+    int lines = 0;
+    char buffer[2000];
+    while (fgets(buffer, sizeof(buffer), file)) {
+        lines++;
+    }
+    lines--; // Bỏ qua dòng tiêu đề
 
-    fgets(line, sizeof(line), file); // Bỏ qua dòng tiêu đề CSV
+    // Cấp phát mảng SinhVien
+    *svList = (SinhVien*)malloc(lines * sizeof(SinhVien));
+    if (!*svList) {
+        printf("Khong the cap phat bo nho\n");
+        fclose(file);
+        return;
+    }
 
-    while (fgets(line, sizeof(line), file) && *count < MAX_SV) {
-        SinhVien *sv = &svList[*count];
-        sscanf(line, "%[^,],%[^,],%[^,],%s", sv->MSSV, sv->TenSV, sv->Khoa, sv->KhoaHoc);
-        (*count)++;
+    // Đặt con trỏ file về đầu
+    rewind(file);
+    fgets(buffer, sizeof(buffer), file); // Bỏ qua dòng tiêu đề
+
+    while (fgets(buffer, sizeof(buffer), file) && count < lines) {
+        // Xóa ký tự xuống dòng
+        buffer[strcspn(buffer, "\n")] = 0;
+
+        // Tách chuỗi
+        char* token = strtok(buffer, ",");
+        if (token) strncpy((*svList)[count].MSSV, token, sizeof((*svList)[count].MSSV) - 1);
+
+        token = strtok(NULL, ",");
+        if (token) strncpy((*svList)[count].TenSV, token, sizeof((*svList)[count].TenSV) - 1);
+
+        token = strtok(NULL, ",");
+        if (token) strncpy((*svList)[count].Email, token, sizeof((*svList)[count].Email) - 1);
+
+        token = strtok(NULL, ",");
+        if (token) strncpy((*svList)[count].Khoa, token, sizeof((*svList)[count].Khoa) - 1);
+
+        token = strtok(NULL, ",");
+        if (token) strncpy((*svList)[count].KhoaHoc, token, sizeof((*svList)[count].KhoaHoc) - 1);
+
+        token = strtok(NULL, ",");
+        if (token) strncpy((*svList)[count].NgaySinh, token, sizeof((*svList)[count].NgaySinh) - 1);
+
+        token = strtok(NULL, ",");
+        if (token) strncpy((*svList)[count].HinhAnh, token, sizeof((*svList)[count].HinhAnh) - 1);
+
+        token = strtok(NULL, ",");
+        if (token) strncpy((*svList)[count].MoTaBanThan, token, sizeof((*svList)[count].MoTaBanThan) - 1);
+
+        token = strtok(NULL, ",");
+        if (token) strncpy((*svList)[count].SoThich1, token, sizeof((*svList)[count].SoThich1) - 1);
+
+        token = strtok(NULL, ",");
+        if (token) strncpy((*svList)[count].SoThich2, token ? token : "", sizeof((*svList)[count].SoThich2) - 1);
+
+        count++;
     }
 
     fclose(file);
 }
 
+
+// Đọc file template HTML
 char *readTemplate(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
-        perror("Không thể mở file template HTML");
+        printf("Không thể mở file template HTML\n");
         exit(1);
     }
 
@@ -55,35 +97,56 @@ char *readTemplate(const char *filename) {
     return buffer;
 }
 
+// Thay thế các placeholder trong template HTML
 void replaceAndSave(const char *templateHTML, SinhVien sv, const char *outputFile) {
+    // Mở file để ghi HTML
     FILE *file = fopen(outputFile, "w");
     if (!file) {
-        perror("Không thể tạo file HTML output");
+        printf("Không thể tạo file HTML output\n");
         exit(1);
     }
 
-    char buffer[MAX_LINE * 10]; // Giữ nội dung đã thay thế
-    strcpy(buffer, templateHTML);
+    const int BUF_SIZE = 1024 * 20;
+    char buffer[BUF_SIZE];
+    char tempBuf[BUF_SIZE];
+    // sao chép template vào buffer
+    strncpy(buffer, templateHTML, BUF_SIZE - 1);
+    buffer[BUF_SIZE - 1] = '\0';
 
-    // Thay thế các placeholder
-    char temp[MAX_LINE];
-    snprintf(temp, sizeof(temp), buffer, sv.MSSV, sv.TenSV, sv.Khoa, sv.KhoaHoc);
+    // Giá trị tương ứng với danh sách placeholder
+    const char *templateValues[] = {sv.MSSV, sv.TenSV, sv.Khoa, sv.KhoaHoc, sv.NgaySinh, sv.HinhAnh, sv.MoTaBanThan, sv.SoThich1, sv.SoThich2, sv.Email};
+    size_t count = sizeof(placeholders) / sizeof(placeholders[0]);
 
-    fputs(temp, file);
+    // Thay thế từng placeholder
+    for (size_t i = 0; i < count; ++i) {
+        char *pos;
+        while ((pos = strstr(buffer, placeholders[i]))) {
+            size_t prefixLen = pos - buffer;
+            memcpy(tempBuf, buffer, prefixLen);
+            tempBuf[prefixLen] = '\0';
+            strncat(tempBuf, templateValues[i], BUF_SIZE - strlen(tempBuf) - 1);
+            strncat(tempBuf, pos + strlen(placeholders[i]), BUF_SIZE - strlen(tempBuf) - 1);
+            strncpy(buffer, tempBuf, BUF_SIZE - 1);
+            buffer[BUF_SIZE - 1] = '\0';
+        }
+    }
+
+    // ghi buffer đã thay thế vào file
+    fputs(buffer, file);
     fclose(file);
 }
 
 int main() {
-    SinhVien svList[MAX_SV];
+    SinhVien *svList;
     int count;
 
-    readCSV("../sinhvien.csv", svList, &count);
+    readCSV("sinhvien.csv", &svList, count);
 
-    char *templateHTML = readTemplate("../template.html");
+    char *templateHTML = readTemplate("template.html");
 
     for (int i = 0; i < count; i++) {
         char filename[50];
-        snprintf(filename, sizeof(filename), "output_%s.html", svList[i].MSSV);
+        snprintf(filename, sizeof(filename), "output/%s.html", svList[i].MSSV);
         replaceAndSave(templateHTML, svList[i], filename);
     }
 

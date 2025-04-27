@@ -1,4 +1,13 @@
-MSSV,TenSV,Khoa,KhoaHoc
-SV001,Nguyễn Văn A,Công Nghệ Thông Tin,2021
-SV002,Trần Thị B,Kinh Tế,2020
-SV003,Lê Văn C,Kỹ Thuật Cơ Khí,2022
+MSSV,TenSV,Email,Khoa,KhoaHoc,NgaySinh,HinhAnh,MoTaBanThan,SoThich1,SoThich2
+SV001, Nguyễn Văn A ,nguyenvana@gmail.com,Công Nghệ Thông Tin,2024,11/6/1995,Images/SV001.jpg,Tôi là một người rất thân thiện.,Âm nhạc: rock,Du lịch
+SV002, Trần Thị B ,tranthib@gmail.com,Công Nghệ Sinh Học,2025,11/7/2005,Images/SV002.jpg,Tôi là một người đam mê thiên nhiên.,Âm nhạc: Pop-ballad,Ẩm thực: các món bún
+SV003, Phạm Văn C ,phamvanc@gmail.com,Công Nghệ Thông Tin,2024,11/6/1995,Images/SV003.jpg,Tôi sinh ra và lớn lên tại Hà Nội. Hiện nay tôi đang theo học tại trường KHTN.,Âm nhạc: rock,Đi bộ
+SV004, Lý Thị D ,lythid@gmail.com,Hoá Học,2023,11/6/2005,Images/SV004.jpg,Tôi là một người rất năng động.,Âm nhạc: Jazz,Phượt
+SV005, Lê Văn E ,levane@gmail.com,Vật Lý,2022,11/6/2004,Images/SV001.jpg,Tôi là một người rất thân thiện.,Âm nhạc: Ballad,Công nghệ: AI
+SV006, Trương Thị F ,truongthif@gmail.com,Sinh Học,2021,13/6/2003,Images/SV002.jpg,Tôi là một người rất năng động.,Chơi game,Công nghệ: AI
+SV007, Phan Văn G ,phang@gmail.com,Địa Chất,2022,15/8/2005,Images/SV003.jpg,Tôi là một người rất cởi mở.,Âm nhạc: Jazz,Chơi game
+SV008, Tô Thị H ,tothih@gmail.com,Công Nghệ Thông Tin,2023,16/7/2005,Images/SV004.jpg,Tôi sinh ra và lớn lên tại Phan Thiết. Hiện nay tôi đang theo học tại trường KHTN.,Âm nhạc: pop,Công nghệ
+SV009, Nguyễn Văn I ,nguyenvani@gmail.com,Công Nghệ Thông Tin,2022,17/12/2001,Images/SV001.jpg,Tôi là một người rất cởi mở.,Âm nhạc: Indie,Chơi game
+SV010, Nguyễn Thị J ,nguyenthij@gmail.com,Công Nghệ Thông Tin,2022,12/2/1999,Images/SV002.jpg,Tôi là một người rất thân thiện.,Âm nhạc: rock,Công nghệ
+
+
